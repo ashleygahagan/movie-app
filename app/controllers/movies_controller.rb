@@ -1,4 +1,7 @@
 class MoviesController < ApplicationController
+
+  before_action :authenticate_admin, except: [:index, :show]
+
   def index
     movies = Movie.where(english: true)
     render json: movies.as_json
@@ -17,6 +20,7 @@ class MoviesController < ApplicationController
       render json: movie.as_json
     else
       render json: {errors: movie.errors.full_message}, status: :unprocessable_entity
+    end
   end
 
   def show
@@ -31,11 +35,12 @@ class MoviesController < ApplicationController
     movie.plot = params[:plot] || movie.plot
     movie.director = params[:director] || movie.director
     movie.english = params[:english] || movie.english
-    movie.movie_id = params[:movie_id] || movie.movie_id
+    # movie.movie_id = params[:movie_id] || movie.movie_id
     if movie.save
       render json: movie.as_json
     else
       render json: {errors: movie.errors.full_message}, status: :unprocessable_entity
+    end
   end
 
   def destroy
